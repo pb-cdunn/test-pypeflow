@@ -147,6 +147,7 @@ def main1(prog_name, input_config_fn, logger_config_fn=None):
             job_type=CFG['job_type'],
             job_queue=CFG['job_queue'],
             watcher_type=CFG['watcher_type'],
+            max_jobs=CFG.get('max_jobs', 24),
     )
     run(wf, CFG,
         setNumThreadAllowed=PypeProcWatcherWorkflow.setNumThreadAllowed)
