@@ -133,10 +133,10 @@ def run(wf, config,
     for i in range(N):
         make_task = PypeTask(
                 inputs = {},
-                #outputs = {'out': 'touched',},
-                outputs = {'out': 'hey-{}/touched'.format(i),},
+                outputs = {'out': 'touched',},
+                #outputs = {'out': 'hey-{}/touched'.format(i),},
                 parameters = {},
-                #wdir = 'hey-{}'.format(i),
+                wdir = 'hey-{}'.format(i),
         )
         t = make_task(mymod.touchit)
         wf.addTask(t)
