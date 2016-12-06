@@ -134,6 +134,16 @@ def run(wf, config,
     )
     t1 = make_task(mymod.say_hey1)
     wf.addTasks([t0, t1]) # for new-simple-way, we could add just t1
+    N = int(os.environ.get('N', '1'))
+    for i in range(N):
+        make_task = PypeTask(
+                inputs = {},
+                outputs = {'out': 'hey-{}/touched'.format(i),},
+                parameters = {},
+                TaskType = None,
+        )
+        t = make_task(mymod.touchit)
+        wf.addTask(t)
     wf.refreshTargets(exitOnFailure=exitOnFailure)
 
 def main1(prog_name, input_config_fn, logger_config_fn=None):

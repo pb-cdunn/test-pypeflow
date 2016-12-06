@@ -5,6 +5,10 @@ from pypeflow.simple_pwatcher_bridge import (PypeTask,
         PypeLocalFile, makePypeLocalFile, fn,
         PypeProcWatcherWorkflow, MyFakePypeThreadTaskBase)
 from pypeflow.simple_pwatcher_bridge import fn
+import logging
+import os
+import time
+LOG = logging.getLogger(__name__)
 
 def say_hey0(self):
     o0 = fn(self.o0)
@@ -33,3 +37,16 @@ touch %(o1)s
     with open(script_fn, 'w') as ofs:
         ofs.write(script)
     self.generated_script_fn = script_fn
+
+def system(cmd):
+    LOG.info('!!{}'.format(cmd))
+    rc = os.system(cmd)
+    if rc:
+        raise Exception('{} <--- {!r}'.format(rc, cmd))
+def touchit(self):
+    out = fn(self.out)
+    s = 1
+    LOG.info('sleep {}'.format(s))
+    time.sleep(s)
+    cmd = 'touch {}'.format(out)
+    system(cmd)
