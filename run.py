@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.7
-from pypeflow.pwatcher_bridge import PypeProcWatcherWorkflow, MyFakePypeThreadTaskBase
-from pypeflow.data import PypeLocalFile, makePypeLocalFile, fn
-from pypeflow.task import PypeTask
+#from pypeflow.pwatcher_bridge import PypeProcWatcherWorkflow, MyFakePypeThreadTaskBase
+#from pypeflow.data import PypeLocalFile, makePypeLocalFile, fn
+#from pypeflow.task import PypeTask
 from pypeflow.simple_pwatcher_bridge import (PypeTask,
         PypeLocalFile, makePypeLocalFile, fn,
         PypeProcWatcherWorkflow, MyFakePypeThreadTaskBase)
@@ -107,11 +107,8 @@ def parse_config(config_fn):
     return config2dict(config)
 
 def run(wf, config,
-        setNumThreadAllowed,
         ):
     exitOnFailure = True
-    concurrent_jobs = 2
-    setNumThreadAllowed(concurrent_jobs, concurrent_jobs)
     #try:
     #    # Make it always re-run.
     #    os.remove('out.txt')
@@ -122,7 +119,6 @@ def run(wf, config,
             inputs = {},
             outputs = {'o0': o0},
             parameters = {},
-            TaskType = MyFakePypeThreadTaskBase,
     )
     t0 = make_task(mymod.say_hey0)
     o1 = makePypeLocalFile('hey1/out.txt')
@@ -130,7 +126,6 @@ def run(wf, config,
             inputs = {'i0': o0},
             outputs = {'o1': o1},
             parameters = {},
-            TaskType = MyFakePypeThreadTaskBase,
     )
     t1 = make_task(mymod.say_hey1)
     wf.addTasks([t0, t1]) # for new-simple-way, we could add just t1
@@ -138,9 +133,10 @@ def run(wf, config,
     for i in range(N):
         make_task = PypeTask(
                 inputs = {},
+                #outputs = {'out': 'touched',},
                 outputs = {'out': 'hey-{}/touched'.format(i),},
                 parameters = {},
-                TaskType = None,
+                #wdir = 'hey-{}'.format(i),
         )
         t = make_task(mymod.touchit)
         wf.addTask(t)
@@ -157,10 +153,9 @@ def main1(prog_name, input_config_fn, logger_config_fn=None):
             job_type=CFG['job_type'],
             job_queue=CFG['job_queue'],
             watcher_type=CFG['watcher_type'],
-            max_jobs=CFG.get('max_jobs', 24),
+            max_jobs=CFG.get('max_jobs', 2),
     )
-    run(wf, CFG,
-        setNumThreadAllowed=PypeProcWatcherWorkflow.setNumThreadAllowed)
+    run(wf, CFG)
 
 def main(argv=sys.argv):
     parser = argparse.ArgumentParser()
